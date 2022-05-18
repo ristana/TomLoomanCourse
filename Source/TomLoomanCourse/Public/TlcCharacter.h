@@ -28,6 +28,8 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComponent;
 
+	void MoveRight(const float Value);
+
 	void MoveForward(const float Value);
 
 public:	

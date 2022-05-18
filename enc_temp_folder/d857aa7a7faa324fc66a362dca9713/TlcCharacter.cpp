@@ -69,14 +69,14 @@ void ATlcCharacter::MoveRight(const float Value)
 	ControlRot.Pitch = 0.0f;
 	ControlRot.Roll = 0.0f;
 
-	// X = Forward
+	// X = Fowrward
 	// Y = Right
 	// Z = Up
 	
-	FVector RightVector = UKismetMathLibrary::GetRightVector(ControlRot);
+	//UKismetMathLibrary::GetRightVector(ControlRot);
 
-	//FVector RightVector = FRotationMatrix(ControlRot).GetScaleVector(EAxis::Y);
+	FVector RightVector = FRotationMatrix(ControlRot).GetScaleVector(EAxis::Y);
 
 
-	AddMovementInput(RightVector, Value);
+	//AddMovementInput(RightVector, Value);
 }
