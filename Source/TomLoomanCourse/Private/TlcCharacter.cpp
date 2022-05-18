@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 ATlcCharacter::ATlcCharacter()
@@ -36,6 +37,26 @@ void ATlcCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// -- rotation visualization -- //
+	const float LineArrowSize = 100.0f;
+	const float LineThickness = 5.0f;
+
+	FVector LineStart = GetActorLocation();
+
+	//offset to be right of pawn
+	LineStart += GetActorRightVector() * 100.0f;
+
+	//SetLine end in direction of actors forward vector
+	const FVector ForwardOffset = GetActorForwardVector() * 100.f;
+	const FVector ActorDirection_LineEnd = LineStart + ForwardOffset;
+
+	//Draw Actor Direction
+	DrawDebugDirectionalArrow(GetWorld(), LineStart, ActorDirection_LineEnd, LineArrowSize, FColor::Yellow, false, 0.0f, 0, LineThickness);
+
+	FVector ControlDirection_LineEnd = LineStart + (GetControlRotation().Vector() * 100.0f);
+
+	//Draw controller direction
+	DrawDebugDirectionalArrow(GetWorld(), LineStart, ControlDirection_LineEnd, LineArrowSize, FColor::Green, false, 0.0f, 0, LineThickness);
 }
 
 // Called to bind functionality to input
