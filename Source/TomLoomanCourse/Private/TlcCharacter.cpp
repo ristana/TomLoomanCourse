@@ -69,6 +69,8 @@ void ATlcCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("Lookup", this, &APawn::AddControllerPitchInput);
+
+	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ATlcCharacter::PrimaryAttack);
 }
 
 void ATlcCharacter::MoveForward(const float Value)
@@ -96,8 +98,17 @@ void ATlcCharacter::MoveRight(const float Value)
 	
 	FVector RightVector = UKismetMathLibrary::GetRightVector(ControlRot);
 
-	//FVector RightVector = FRotationMatrix(ControlRot).GetScaleVector(EAxis::Y);
-
-
 	AddMovementInput(RightVector, Value);
+}
+
+void ATlcCharacter::PrimaryAttack()
+{
+	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	
+	FTransform SpawnTransform = FTransform(GetControlRotation(), HandLocation, FVector3d(1.0, 1.0, 1.0));
+
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTransform, SpawnParameters);
 }

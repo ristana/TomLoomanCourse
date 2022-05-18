@@ -14,6 +14,10 @@ class TOMLOOMANCOURSE_API ATlcCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+protected:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> ProjectileClass;
+	
 public:
 	// Sets default values for this character's properties
 	ATlcCharacter();
@@ -31,6 +35,8 @@ protected:
 	void MoveRight(const float Value);
 
 	void MoveForward(const float Value);
+
+	void PrimaryAttack();
 
 public:	
 	// Called every frame
