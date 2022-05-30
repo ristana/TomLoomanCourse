@@ -17,7 +17,7 @@ class TOMLOOMANCOURSE_API ATlcCharacter : public ACharacter
 protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> ProjectileClass;
-	
+
 public:
 	// Sets default values for this character's properties
 	ATlcCharacter();
@@ -38,11 +38,15 @@ protected:
 
 	void PrimaryAttack();
 
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION(BlueprintCallable)
+	void DoJump();
 
 };
