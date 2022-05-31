@@ -7,6 +7,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "DrawDebugHelpers.h"
+#include "TlcInteractionComponent.h"
 
 // Sets default values
 ATlcCharacter::ATlcCharacter()
@@ -17,9 +18,13 @@ ATlcCharacter::ATlcCharacter()
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
 	SpringArmComponent->bUsePawnControlRotation = true;
 	SpringArmComponent->SetupAttachment(RootComponent);
-	
+	SpringArmComponent->TargetArmLength = 450.f;
+		
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComponent->SetupAttachment(SpringArmComponent);
+	CameraComponent->SetRelativeTransform(FTransform(FRotator(0, 0, 0), FVector(0, 0, 40), FVector(0, 0, 0)));
+
+	InteractionComponent = CreateDefaultSubobject<UTlcInteractionComponent>("InteractionComponent");
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationYaw = false;
@@ -71,7 +76,7 @@ void ATlcCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAxis("Lookup", this, &APawn::AddControllerPitchInput);
 
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ATlcCharacter::PrimaryAttack);
-
+	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ATlcCharacter::PrimaryInteract);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ATlcCharacter::DoJump);
 }
 
@@ -105,14 +110,34 @@ void ATlcCharacter::MoveRight(const float Value)
 
 void ATlcCharacter::PrimaryAttack()
 {
+	if (!this->GetCurrentMontage())
+	{
+		PlayAnimMontage(AttackAnim);
+
+		GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ATlcCharacter::PrimaryAttack_TimeElapsed, 0.2f);
+	}
+
+	//GetWorldTimerManager().ClearTimer(TimerHandle_PrimaryAttack);
+}
+
+void ATlcCharacter::PrimaryAttack_TimeElapsed()
+{
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-	
+
 	FTransform SpawnTransform = FTransform(GetControlRotation(), HandLocation, FVector3d(1.0, 1.0, 1.0));
 
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTransform, SpawnParameters);
+}
+
+void ATlcCharacter::PrimaryInteract()
+{
+	if(InteractionComponent)
+	{
+		InteractionComponent->PrimaryInteract();
+	}
 }
 
 void ATlcCharacter::DoJump()

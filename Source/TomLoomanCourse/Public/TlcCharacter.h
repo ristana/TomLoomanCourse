@@ -8,6 +8,8 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class UTlcInteractionComponent;
+class UAnimMontage;
 
 UCLASS()
 class TOMLOOMANCOURSE_API ATlcCharacter : public ACharacter
@@ -15,8 +17,11 @@ class TOMLOOMANCOURSE_API ATlcCharacter : public ACharacter
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Attack")
 	TSubclassOf<AActor> ProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	UAnimMontage* AttackAnim;
 
 public:
 	// Sets default values for this character's properties
@@ -32,12 +37,10 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComponent;
 
-	void MoveRight(const float Value);
+	UPROPERTY(VisibleAnywhere)
+	UTlcInteractionComponent* InteractionComponent;
 
-	void MoveForward(const float Value);
-
-	void PrimaryAttack();
-
+	FTimerHandle TimerHandle_PrimaryAttack;
 
 public:	
 	// Called every frame
@@ -46,7 +49,18 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+protected:
 	UFUNCTION(BlueprintCallable)
 	void DoJump();
+
+	void MoveRight(const float Value);
+
+	void MoveForward(const float Value);
+
+	void PrimaryAttack();
+
+	void PrimaryAttack_TimeElapsed();
+	
+	void PrimaryInteract();
 
 };
